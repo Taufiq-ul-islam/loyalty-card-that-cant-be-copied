@@ -1,5 +1,33 @@
-import Image from "next/image";
+"use client";
 
+// import Image from "next/image";
+import {usePrivy} from '@privy-io/react-auth';
+import LoginWithEmail from './login-email';
+
+export default function Home() {
+  const {ready, authenticated, user} = usePrivy();
+
+  if (!ready) {
+    return <div>Loading...</div>;
+  }
+
+  if (!authenticated) {
+    return <LoginWithEmail />;
+  }
+
+  // Now it's safe to use other Privy hooks and state
+  // return <div>Privy is ready!</div>;
+
+  return (
+    <main>
+      <h1>Welcome!</h1>
+      <p>Logged in as: {user?.email?.address}</p>
+      <p>Loyalty stamps: 0</p>
+    </main>
+  );
+}
+
+/*
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -67,3 +95,4 @@ export default function Home() {
     </div>
   );
 }
+*/
