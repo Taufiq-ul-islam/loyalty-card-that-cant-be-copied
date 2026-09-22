@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Loyalty Card Demo
 
-## Getting Started
+A small Next.js app that demonstrates a loyalty card flow using Privy authentication. Users sign in with an email code, and the app can award a loyalty stamp through a server route that verifies the access token before incrementing the count.
 
-First, run the development server:
+## What this project does
+
+- Email-based login powered by Privy
+- Protected API endpoint for awarding loyalty stamps
+- In-memory stamp tracking per verified Privy user
+- Simple client-side UX for logging in and awarding a stamp
+
+## Tech stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Privy Auth
+- Tailwind CSS
+
+## Project structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+app/
+  api/
+    award-stamp/
+      route.ts         # Verifies the Privy access token and increments stamp count
+  award-stamp.tsx      # Button to trigger a stamp award
+  globals.css          # Global styling
+  layout.tsx           # App shell and Privy provider setup
+  login-email.tsx      # Email login form
+  page.tsx             # Main home screen
+  providers.tsx        # Wraps the app in PrivyProvider
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 20+
+- pnpm
+- A Privy app configured in the Privy dashboard
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. Install dependencies:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Create a `.env.local` file in the project root:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+PRIVY_APP_SECRET=your_privy_app_secret
+```
 
-## Deploy on Vercel
+3. Start the dev server:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Open http://localhost:3000 in your browser.
+
+## How it works
+
+- The user signs in with their email using Privy.
+- The client fetches an access token with `getAccessToken()`.
+- The browser sends that token to `/api/award-stamp`.
+- The server verifies the token through Privy before incrementing the user’s stamp count.
+- The current count is returned to the client and displayed.
+
+## Notes
+
+- Stamp data is stored in memory using a `Map`, so it resets when the server restarts.
+- This is a demo/prototype and is not production-ready persistence or multi-instance storage.
+- For a real deployment, replace the in-memory store with a database or persistent backend.
+
+## Useful scripts
+
+```bash
+pnpm dev      # run the development server
+pnpm build    # create a production build
+pnpm start    # run the production server
+pnpm lint     # run ESLint
+```
+
+## Security notes
+
+The server route validates the bearer token before allowing any change to the stamp count. The route does not accept anonymous requests and rejects invalid or missing authorization headers.
